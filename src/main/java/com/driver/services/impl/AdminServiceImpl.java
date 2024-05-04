@@ -85,7 +85,12 @@ public class AdminServiceImpl implements AdminService {
     // Utility method to generate country code based on the country name
     private String generateCountryCode(String countryName) {
         // Assuming the country code is the first three characters of the country name
-        return countryName.substring(0, 3).toUpperCase();
+        for (CountryName enumValue : CountryName.values()) {
+            if (enumValue.name().equalsIgnoreCase(countryName.toUpperCase())) {
+                return enumValue.toCode();
+            }
+        }
+        throw new IllegalArgumentException("Invalid country name: " + countryName);
     }
 
 

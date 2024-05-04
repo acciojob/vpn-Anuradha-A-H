@@ -32,23 +32,22 @@ public class UserServiceImpl implements UserService {
         user.setOriginalIp(""); // Original IP will be set later
         user.setMaskedIp(null); // Masked IP initially null
 
-        // Create a new Country object for the user's original country
+
+
+        if (!isValidCountryName(countryName)) {
+            throw new IllegalArgumentException("Country not found");
+        }
+
+        // Create a new Country object based on the provided country name
         Country country = new Country();
         country.setCountryName(countryName);
-        country.setCode(generateCountryCode(countryName)); // Set the country code based on the country name
-
-        // Save the country object
-        countryRepository3.save(country);
-
+        country.setCode(generateCountryCode(countryName));
         user.setOriginalCountry(country);
 
         // Save the user object
-        User savedUser = userRepository3.save(user);
-
-        // Set the original IP using the country code and user id
-        savedUser.setOriginalIp(country.getCode() + "." + savedUser.getId());
-
-        return savedUser;
+        User us =  userRepository3.save(user);
+        user.setOriginalIp(country.getCode()+"."+us.getId());
+        return us;
 
     }
 
@@ -76,9 +75,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    private boolean isValidCountryName(String countryName) {
+        // Check if the country name is one of the specified options
+        return countryName.matches("(?i)ind|aus|usa|chi|jpn");
+    }
+
     // Utility method to generate country code based on the country name
     private String generateCountryCode(String countryName) {
         // Assuming the country code is the first three characters of the country name
-        return countryName.substring(0, 3).toUpperCase();
+        for (CountryName enumValue : CountryName.values()) {
+            if (enumValue.name().equalsIgnoreCase(countryName.toUpperCase())) {
+                return enumValue.toCode();
+            }
+        }
+        throw new IllegalArgumentException("Invalid country name: " + countryName);
     }
 }
