@@ -65,8 +65,8 @@ public class AdminServiceImpl implements AdminService {
 
             // Create a new Country object for the given countryName
             Country country = new Country();
-            country.setName(CountryName.valueOf(countryName.toUpperCase())); // Assuming countryName is in uppercase
-            country.setCode(country.getName().toCode()); // Set the country code based on the enum value
+            country.setCountryName(CountryName.valueOf(countryName.toUpperCase())); // Assuming countryName is in uppercase
+            country.setCode(country.getCountryName().toCode()); // Set the country code based on the enum value
 
             // Add the country to the service provider's country list
             serviceProvider.getCountryList().add(country);

@@ -10,7 +10,7 @@ public class Country {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private CountryName name;
+    private CountryName countryName;
 
     private String code;
 
@@ -36,12 +36,12 @@ public class Country {
         this.id = id;
     }
 
-    public CountryName getName() {
-        return name;
+    public CountryName getCountryName() {
+        return countryName;
     }
 
-    public void setName(CountryName name) {
-        this.name = name;
+    public void setCountryName(CountryName name) {
+        this.countryName = countryName;
     }
 
     public String getCode() {
