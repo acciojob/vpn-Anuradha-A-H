@@ -34,14 +34,21 @@ public class UserServiceImpl implements UserService {
 
         // Create a new Country object for the user's original country
         Country country = new Country();
-//        country.setCountryName(CountryName.valueOf(countryName.toUpperCase())); // Assuming countryName is in uppercase
-//        country.setCode(); // Set the country code based on enum value
+        country.setCountryName(countryName);
+        country.setCode(generateCountryCode(countryName)); // Set the country code based on the country name
+
+        // Save the country object
+        countryRepository3.save(country);
+
         user.setOriginalCountry(country);
 
         // Save the user object
-        User us =  userRepository3.save(user);
-        user.setOriginalIp(country.getCode()+"."+us.getId());
-        return us;
+        User savedUser = userRepository3.save(user);
+
+        // Set the original IP using the country code and user id
+        savedUser.setOriginalIp(country.getCode() + "." + savedUser.getId());
+
+        return savedUser;
 
     }
 
@@ -67,5 +74,11 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new RuntimeException("User not found with id: " + userId);
         }
+    }
+
+    // Utility method to generate country code based on the country name
+    private String generateCountryCode(String countryName) {
+        // Assuming the country code is the first three characters of the country name
+        return countryName.substring(0, 3).toUpperCase();
     }
 }
