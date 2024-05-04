@@ -38,15 +38,9 @@ public class AdminServiceImpl implements AdminService {
         Optional<Admin> optionalAdmin = adminRepository1.findById(adminId);
         if (optionalAdmin.isPresent()) {
             Admin admin = optionalAdmin.get();
-
-            // Create a new ServiceProvider
             ServiceProvider serviceProvider = new ServiceProvider();
             serviceProvider.setName(providerName);
-
-            // Add the service provider to the admin's list
             admin.getServiceProviders().add(serviceProvider);
-
-            // Save the admin
             return adminRepository1.save(admin);
         } else {
             throw new RuntimeException("Admin not found with id: " + adminId);
@@ -58,25 +52,22 @@ public class AdminServiceImpl implements AdminService {
     public ServiceProvider addCountry(int serviceProviderId, String countryName) throws Exception{
 
 
-        // Find the service provider by serviceProviderId
         Optional<ServiceProvider> optionalServiceProvider = serviceProviderRepository1.findById(serviceProviderId);
         if (optionalServiceProvider.isPresent()) {
             ServiceProvider serviceProvider = optionalServiceProvider.get();
 
+            // Check if the provided country name is valid
             if (!isValidCountryName(countryName)) {
-                throw new IllegalArgumentException("Invalid country name: " + countryName);
+                throw new IllegalArgumentException("Country not found");
             }
 
-            // Create a new Country object for the given countryName
+            // Create a new Country object based on the provided country name
             Country country = new Country();
-            country.setCountryName(CountryName.valueOf(countryName.toUpperCase())); // Assuming countryName is in uppercase
-            country.setCode(country.getCountryName().toCode()); // Set the country code based on the enum value
+            country.setCountryName(countryName);
+            country.setCode(generateCountryCode(countryName));
 
             // Add the country to the service provider's country list
             serviceProvider.getCountryList().add(country);
-
-            // Set the service provider for the country
-            country.setServiceProvider(serviceProvider);
 
             // Save the updated service provider
             return serviceProviderRepository1.save(serviceProvider);
@@ -85,12 +76,17 @@ public class AdminServiceImpl implements AdminService {
         }
     }
 
+    // Utility method to check if the provided country name is valid
     private boolean isValidCountryName(String countryName) {
-        try {
-            CountryName.valueOf(countryName.toUpperCase());
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
+        // Check if the country name is one of the specified options
+        return countryName.matches("(?i)ind|aus|usa|chi|jpn");
     }
+
+    // Utility method to generate country code based on the country name
+    private String generateCountryCode(String countryName) {
+        // Assuming the country code is the first three characters of the country name
+        return countryName.substring(0, 3).toUpperCase();
+    }
+
+
 }

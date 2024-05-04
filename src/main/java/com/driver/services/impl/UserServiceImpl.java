@@ -34,8 +34,8 @@ public class UserServiceImpl implements UserService {
 
         // Create a new Country object for the user's original country
         Country country = new Country();
-        country.setCountryName(CountryName.valueOf(countryName.toUpperCase())); // Assuming countryName is in uppercase
-        country.setCode(country.getCountryName().toCode()); // Set the country code based on enum value
+//        country.setCountryName(CountryName.valueOf(countryName.toUpperCase())); // Assuming countryName is in uppercase
+//        country.setCode(); // Set the country code based on enum value
         user.setOriginalCountry(country);
 
         // Save the user object
