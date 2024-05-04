@@ -42,6 +42,7 @@ public class AdminServiceImpl implements AdminService {
         ServiceProvider serviceProvider = new ServiceProvider();
         serviceProvider.setName(providerName);
         serviceProvider.setAdmin(admin);
+        // add service provider
         List<ServiceProvider> serviceProviderList = admin.getServiceProviders();
         serviceProviderList.add(serviceProvider);
         admin.setServiceProviders(serviceProviderList);
@@ -57,19 +58,25 @@ public class AdminServiceImpl implements AdminService {
         boolean isCountryPresent = false;
 
         String str = countryName.toUpperCase();
+
+
+        // check for string validation
         if(!str.equals("IND") && !str.equals("JPN") && !str.equals("AUS") && !str.equals("CHI") && !str.equals("USA")){
             throw  new Exception("Country not found");
         }
         ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
-
+        // create country obj
         Country country = new Country(CountryName.valueOf(str), CountryName.valueOf(str).toCode());
 
 
+        // add country to service provider
         country.setServiceProvider(serviceProvider);
         serviceProvider.getCountryList().add(country);
 
         serviceProviderRepository1.save(serviceProvider);
 
+
+        // save it
         return serviceProvider;
 
     }
