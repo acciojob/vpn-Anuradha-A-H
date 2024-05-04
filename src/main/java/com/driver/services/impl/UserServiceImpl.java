@@ -34,10 +34,6 @@ public class UserServiceImpl implements UserService {
 
 
 
-        if (!isValidCountryName(countryName)) {
-            throw new IllegalArgumentException("Country not found");
-        }
-
         // Create a new Country object based on the provided country name
         Country country = new Country();
         country.setCountryName(countryName);
@@ -75,19 +71,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private boolean isValidCountryName(String countryName) {
-        // Check if the country name is one of the specified options
-        return countryName.matches("(?i)ind|aus|usa|chi|jpn");
-    }
-
-    // Utility method to generate country code based on the country name
     private String generateCountryCode(String countryName) {
-        // Assuming the country code is the first three characters of the country name
-        for (CountryName enumValue : CountryName.values()) {
-            if (enumValue.name().equalsIgnoreCase(countryName.toUpperCase())) {
-                return enumValue.toCode();
-            }
+        try {
+            // Convert the country name to uppercase to match the enum values
+            String uppercaseCountryName = countryName.toUpperCase();
+
+            // Find the corresponding CountryName enum value
+            CountryName countryEnum = CountryName.valueOf(uppercaseCountryName);
+
+            // Retrieve the code using the toCode() method of the enum
+            return countryEnum.toCode();
+        } catch (IllegalArgumentException e){
+            // If the provided country name does not match any enum value, throw an error
+            throw new IllegalArgumentException("Country not found");
         }
-        throw new IllegalArgumentException("Invalid country name: " + countryName);
     }
 }
