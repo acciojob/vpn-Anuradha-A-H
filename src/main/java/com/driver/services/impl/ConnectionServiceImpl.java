@@ -35,14 +35,14 @@ public class ConnectionServiceImpl implements ConnectionService {
             }
 
             // Check if the countryName corresponds to the user's original country
-            if (user.getOriginalCountry().getName().toString().equalsIgnoreCase(countryName)) {
+            if (user.getOriginalCountry().getCountryName().toString().equalsIgnoreCase(countryName)) {
                 return user; // No action required, return the user as it is
             }
 
             // Find suitable service provider to connect to the given country
             List<ServiceProvider> suitableProviders = user.getServiceProviderList().stream()
                     .filter(provider -> provider.getCountryList().stream()
-                            .anyMatch(country -> country.getName().toString().equalsIgnoreCase(countryName)))
+                            .anyMatch(country -> country.getCountryName().toString().equalsIgnoreCase(countryName)))
                     .sorted(Comparator.comparing(ServiceProvider::getId))
                     .collect(Collectors.toList());
 
