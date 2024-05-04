@@ -25,6 +25,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Connection> connectionList;
 
+    @OneToOne
+    @JoinColumn
+    private Country country;
+
     public int getId() {
         return id;
     }
