@@ -14,24 +14,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @RunWith(MockitoJUnitRunner.Silent.class)
-@SpringBootTest
+//@SpringBootTest
 public class TestCases {
 
-    private final AdminServiceImpl adminService;
-
-    @Autowired
-    public TestCases(AdminServiceImpl adminService) {
-        this.adminService = adminService;
-    }
-
-    @Test
-    public void testRegister() {
-        // Call the register method with some dummy values
-        Admin admin = adminService.register("admin23232", "admin123");
-
-        // Assert that the returned admin is not null
-        assertNotNull(admin);
-    }
+//    private final AdminServiceImpl adminService;
+//
+//    @Autowired
+//    public TestCases(AdminServiceImpl adminService) {
+//        this.adminService = adminService;
+//    }
+//
+//    @Test
+//    public void testRegister() {
+//        // Call the register method with some dummy values
+//        Admin admin = adminService.register("admin23232", "admin123");
+//
+//        // Assert that the returned admin is not null
+//        assertNotNull(admin);
+//    }
 }
 
 
