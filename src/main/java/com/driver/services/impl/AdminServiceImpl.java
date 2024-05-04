@@ -63,6 +63,10 @@ public class AdminServiceImpl implements AdminService {
         if (optionalServiceProvider.isPresent()) {
             ServiceProvider serviceProvider = optionalServiceProvider.get();
 
+            if (!isValidCountryName(countryName)) {
+                throw new IllegalArgumentException("Invalid country name: " + countryName);
+            }
+
             // Create a new Country object for the given countryName
             Country country = new Country();
             country.setCountryName(CountryName.valueOf(countryName.toUpperCase())); // Assuming countryName is in uppercase
@@ -78,6 +82,15 @@ public class AdminServiceImpl implements AdminService {
             return serviceProviderRepository1.save(serviceProvider);
         } else {
             throw new RuntimeException("Service provider not found with id: " + serviceProviderId);
+        }
+    }
+
+    private boolean isValidCountryName(String countryName) {
+        try {
+            CountryName.valueOf(countryName.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
         }
     }
 }
