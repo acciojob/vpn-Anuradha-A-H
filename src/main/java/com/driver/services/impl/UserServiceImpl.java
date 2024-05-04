@@ -25,65 +25,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(String username, String password, String countryName) throws Exception{
+        String countryName1 = countryName.toUpperCase();
+
+        if (!countryName1.equals("IND") && !countryName1.equals("USA") && !countryName1.equals("CHI") && !countryName1.equals("JPN"))
+            throw new Exception("Country not found");
+        Country country = new Country(CountryName.valueOf(countryName1.toString()), CountryName.valueOf(countryName1).toCode());
+
+
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
-        user.setConnected(false); // Set default connected state
-        user.setOriginalIp(""); // Original IP will be set later
-        user.setMaskedIp(null); // Masked IP initially null
+        user.setConnected(false);
 
-
-
-        // Create a new Country object based on the provided country name
-        Country country = new Country();
-        country.setCountryName(countryName);
-        country.setCode(generateCountryCode(countryName));
+        country.setUser(user);
         user.setOriginalCountry(country);
 
-        // Save the user object
-        User us =  userRepository3.save(user);
-        user.setOriginalIp(country.getCode()+"."+us.getId());
-        return us;
+        user = userRepository3.save(user);
 
+        user.setOriginalIp(new String(user.getOriginalCountry().getCode() + "." + user.getId()));
+
+        user = userRepository3.save(user);
+        return user;
     }
 
     @Override
     public User subscribe(Integer userId, Integer serviceProviderId) {
-        Optional<User> optionalUser = userRepository3.findById(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+        ServiceProvider serviceProvider = serviceProviderRepository3.findById(serviceProviderId).get();
+        User user = userRepository3.findById(userId).get();
 
-            // Find the service provider
-            Optional<ServiceProvider> optionalProvider = serviceProviderRepository3.findById(serviceProviderId);
-            if (optionalProvider.isPresent()) {
-                ServiceProvider serviceProvider = optionalProvider.get();
+        user.getServiceProviderList().add(serviceProvider);
+        serviceProvider.getUsers().add(user);
 
-                // Add the service provider to the user's list
-                user.getServiceProviderList().add(serviceProvider);
-
-                // Update the user
-                return userRepository3.save(user);
-            } else {
-                throw new RuntimeException("Service provider not found with id: " + serviceProviderId);
-            }
-        } else {
-            throw new RuntimeException("User not found with id: " + userId);
-        }
+        serviceProviderRepository3.save(serviceProvider);
+        return user;
     }
 
-    private String generateCountryCode(String countryName) {
-        try {
-            // Convert the country name to uppercase to match the enum values
-            String uppercaseCountryName = countryName.toUpperCase();
-
-            // Find the corresponding CountryName enum value
-            CountryName countryEnum = CountryName.valueOf(uppercaseCountryName);
-
-            // Retrieve the code using the toCode() method of the enum
-            return countryEnum.toCode();
-        } catch (IllegalArgumentException e){
-            // If the provided country name does not match any enum value, throw an error
-            throw new IllegalArgumentException("Country not found");
-        }
-    }
 }

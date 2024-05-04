@@ -10,12 +10,11 @@ public class Country {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String countryName;
 
+    private CountryName countryName;
     private String code;
 
-
-    @OneToOne
+    @ManyToOne
     @JoinColumn
     private User user;
 
@@ -23,33 +22,40 @@ public class Country {
     @JoinColumn
     private ServiceProvider serviceProvider;
 
-    // Add any additional attributes as needed
 
-    // Constructors, getters, and setters
-
-
-    public int getId() {
-        return id;
+    public Country() {
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Country(CountryName countryName, String code) {
+        this.countryName = countryName;
+        this.code = code;
     }
 
-    public String getCountryName() {
-        return countryName;
-    }
-
-    public void setCountryName(String countryName) {
+    public Country(
+                   ServiceProvider serviceProvider,
+                   User user,
+                   String code,
+                   CountryName countryName) {
+        this.serviceProvider = serviceProvider;
+        this.user = user;
+        this.code = code;
         this.countryName = countryName;
     }
 
-    public String getCode() {
-        return code;
+    public int getCountryId() {
+        return id;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setCountryId(int countryId) {
+        this.id = countryId;
+    }
+
+    public CountryName getCountryName() {
+        return countryName;
+    }
+
+    public void setCountryName(CountryName countryName) {
+        this.countryName = countryName;
     }
 
     public User getUser() {
@@ -66,5 +72,13 @@ public class Country {
 
     public void setServiceProvider(ServiceProvider serviceProvider) {
         this.serviceProvider = serviceProvider;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

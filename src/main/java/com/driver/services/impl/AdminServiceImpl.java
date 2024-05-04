@@ -11,6 +11,7 @@ import com.driver.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,69 +36,45 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Admin addServiceProvider(int adminId, String providerName) {
 
-        Optional<Admin> optionalAdmin = adminRepository1.findById(adminId);
-        if (optionalAdmin.isPresent()) {
-            Admin admin = optionalAdmin.get();
-            ServiceProvider serviceProvider = new ServiceProvider();
-            serviceProvider.setName(providerName);
-            admin.getServiceProviders().add(serviceProvider);
-            return adminRepository1.save(admin);
-        } else {
-            throw new RuntimeException("Admin not found with id: " + adminId);
-        }
+        Admin admin = adminRepository1.findById(adminId).get();
+
+
+        ServiceProvider serviceProvider = new ServiceProvider();
+        serviceProvider.setName(providerName);
+        serviceProvider.setAdmin(admin);
+        List<ServiceProvider> serviceProviderList = admin.getServiceProviders();
+        serviceProviderList.add(serviceProvider);
+        admin.setServiceProviders(serviceProviderList);
+
+        adminRepository1.save(admin);
+        return admin;
 
     }
 
     @Override
     public ServiceProvider addCountry(int serviceProviderId, String countryName) throws Exception{
 
+        boolean isCountryPresent = false;
 
-        Optional<ServiceProvider> optionalServiceProvider = serviceProviderRepository1.findById(serviceProviderId);
-        if (optionalServiceProvider.isPresent()) {
-            ServiceProvider serviceProvider = optionalServiceProvider.get();
-
-            // Check if the provided country name is valid
-//            if (!isValidCountryName(countryName)) {
-//                throw new IllegalArgumentException("Country not found");
-//            }
-
-            // Create a new Country object based on the provided country name
-            Country country = new Country();
-            country.setCountryName(countryName);
-            country.setCode(generateCountryCode(countryName));
-
-            // Add the country to the service provider's country list
-            serviceProvider.getCountryList().add(country);
-
-            // Save the updated service provider
-            return serviceProviderRepository1.save(serviceProvider);
-        } else {
-            throw new RuntimeException("Service provider not found with id: " + serviceProviderId);
+        String str = countryName.toUpperCase();
+        if(!str.equals("IND") && !str.equals("JPN") && !str.equals("AUS") && !str.equals("CHI") && !str.equals("USA")){
+            throw  new Exception("Country not found");
         }
+        ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
+
+        Country country = new Country(CountryName.valueOf(str), CountryName.valueOf(str).toCode());
+
+
+        country.setServiceProvider(serviceProvider);
+        serviceProvider.getCountryList().add(country);
+
+        serviceProviderRepository1.save(serviceProvider);
+
+        return serviceProvider;
+
     }
 
-    // Utility method to check if the provided country name is valid
-//    private boolean isValidCountryName(String countryName) {
-//        // Check if the country name is one of the specified options
-//        return countryName.matches("(?i)ind|aus|usa|chi|jpn");
-//    }
 
-    // Utility method to generate country code based on the country name
-    private String generateCountryCode(String countryName) {
-        try {
-            // Convert the country name to uppercase to match the enum values
-            String uppercaseCountryName = countryName.toUpperCase();
-
-            // Find the corresponding CountryName enum value
-            CountryName countryEnum = CountryName.valueOf(uppercaseCountryName);
-
-            // Retrieve the code using the toCode() method of the enum
-            return countryEnum.toCode();
-        } catch (IllegalArgumentException e) {
-            // If the provided country name does not match any enum value, throw an error
-            throw new IllegalArgumentException("Country not found ");
-        }
-    }
 
 
 }
